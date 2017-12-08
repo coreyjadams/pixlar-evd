@@ -72,7 +72,7 @@ class RawBase {
   // Function to get the data by plane:
   const std::vector<float>& get_data(unsigned int p) const;
 
-  const std::vector<float>& get_channel_data(unsigned int p, unsigned int ch) const;
+  const std::vector<float> get_channel_data(unsigned int p, unsigned int ch) const;
 
   const std::vector<ordered_sparse_waveform> get_sparse_data(
       unsigned int p, float threshold) const;

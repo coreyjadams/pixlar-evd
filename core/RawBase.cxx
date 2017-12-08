@@ -75,7 +75,7 @@ const std::vector<float> RawBase::get_channel_data(unsigned int p,
   }
   // Copy the data from that channel from the main data:
   returnVec.resize(_y_dimensions.at(p));
-  offset = ch*_y_dimensions.at(p);
+  int offset = ch*_y_dimensions.at(p);
   for (size_t i = 0; i < _y_dimensions.at(p); i ++){
     returnVec.at(i) = _data_array.at(p).at(offset + i);
   }

@@ -216,9 +216,9 @@ void ReadDQMFile::setInput(std::string s) {
   // if the file isn't new, do nothing:
   if (s == producer) return;
   // check to see if this file exists.
+  s.erase(std::remove(s.begin(), s.end(), '\n'), s.end());
   std::cout << "Attempting to open file " << s << std::endl;
-  std::ifstream ifile(s);
-  if (!ifile.is_open()) {
+  if (!std::ifstream(s.c_str())) {
     std::cerr << "ERROR: Input file failed to open.\n";
     return;
   }
