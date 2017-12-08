@@ -1,0 +1,11 @@
+{ decls }
+namespace evd {  }
+
+[ libPixlar_Core.so ]
+# List of selected classes
+class evd::GeoService
+class evd::RawBase
+class evd::ReadDQMFile
+header GeoService.h
+header RawBase.h
+header ReadDQMFile.h
