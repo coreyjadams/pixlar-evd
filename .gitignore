@@ -1,6 +1,10 @@
+*.depend
+*Dict*
 *.o
 *.so
 *.root
 *.rootmap
 *.pcm
+*.pyc
+
 lib/

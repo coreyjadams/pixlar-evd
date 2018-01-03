@@ -7,8 +7,10 @@ except:
 
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
-import numpy as np
+import numpy
 import math
+
+from ROOT import pixevd
 
 class viewport3D(gl.GLViewWidget):
 
@@ -25,55 +27,60 @@ class viewport3D(gl.GLViewWidget):
 
         self._background_items = []
 
-
+        self.drawDetector()
         # self.pan(0,0,self._geometry.length())
         self.show()
 
-    def updateMeta(self,meta):
+    def drawDetector(self):
 
-        _len_x = meta.max_x() - meta.min_x()
-        _len_y = meta.max_y() - meta.min_y()
-        _len_z = meta.max_z() - meta.min_z()
-    
         self.setCenter((0,0,0))
     
         for _item in self._background_items:
             self.removeItem(_item)
             self._background_items = []
     
-        # This section prepares the 3D environment:
-        # Add an axis orientation item:
-        self._axis = gl.GLAxisItem()
-        # self._axis.setSize(x=_len_x, y=_len_y, z=_len_z)
-        self._axis.setSize(x=_len_x, y=0.25*_len_y, z=0.25*_len_z)
-        self.addItem(self._axis)
+        # Draw a set of lines to define the active volume coordinates:
+        pts = numpy.array([[ 0 , 0, 0], [ 1 , 0, 0],
+                           [ 1 , 1, 0], [ 0 , 1, 0],
+                           [ 0 , 0, 0], [ 0 , 0, 1],
+                           [ 1 , 0, 1], [ 1 , 1, 1],
+                           [ 0 , 1, 1], [ 0 , 0, 1],
+                           [ 1 , 0, 1], [ 1 , 0, 0],
+                           [ 1 , 1, 0], [ 1 , 1, 1],
+                           [ 0 , 1, 1], [ 0 , 1, 0]],
+                           dtype=float)
+
+        pts[:,0] *= pixevd.GeoService.GetME().max_x() - pixevd.GeoService.GetME().min_x()
+        pts[:,1] *= pixevd.GeoService.GetME().max_y() - pixevd.GeoService.GetME().min_y()
+        pts[:,2] *= pixevd.GeoService.GetME().max_z() - pixevd.GeoService.GetME().min_z()
+
+        det_outline = gl.GLLinePlotItem(pos=pts,color=(1.0,1.0,1.0,1.0), width=3)
+        self.addItem(det_outline)
+
     
-        # Add a set of grids along x, y, z:
-        self._xy_grid = gl.GLGridItem()
-        self._xy_grid.setSize(x=_len_x, y=_len_y, z=0.0)
-        self._xy_grid.translate(_len_x*0.5, _len_y * 0.5, 0.0)
-        # self._xy_grid.setSize(x=_len_x, y=_len_y, z=0.0)
-        # self._x_grid.setSize(x=self._meta.MaxX(), y=self._meta.MaxY(), z=self._meta.MaxZ())
-        self._yz_grid = gl.GLGridItem()
-        self._yz_grid.setSize(x=_len_z, y=_len_y)
-        self._yz_grid.rotate(-90, 0, 1, 0)
-        self._yz_grid.translate(0, _len_y*0.5, _len_z*0.5)
-        self._xz_grid = gl.GLGridItem()
-        self._xz_grid.setSize(x=_len_x, y=_len_z)
-        self._xz_grid.rotate(90, 1, 0, 0)
-        self._xz_grid.translate(_len_x*0.5, 0, _len_z*0.5)
+        self._background_items.append(det_outline)
     
-        self.addItem(self._xy_grid)
-        self.addItem(self._yz_grid)
-        self.addItem(self._xz_grid)
-    
-        self._background_items.append(self._axis)
-        self._background_items.append(self._xy_grid)
-        self._background_items.append(self._yz_grid)
-        self._background_items.append(self._xz_grid)
-    
-        # Move the center of the camera to the center of the view:
-        self.pan(_len_x*0.5, _len_y * 0.5, _len_z*0.5)
+        # # Move the center of the camera to the center of the view:
+        self.pan(0.5*(pixevd.GeoService.GetME().max_x() + pixevd.GeoService.GetME().min_x()),
+                 0.5*(pixevd.GeoService.GetME().max_y() + pixevd.GeoService.GetME().min_y()),
+                 0.5*(pixevd.GeoService.GetME().max_z() + pixevd.GeoService.GetME().min_z()))
+
+
+        # Draw the array of pads?
+        n_pads = 240
+
+        _pad_pts = numpy.ndarray((n_pads, 3))
+        for i in xrange(n_pads):
+            _pad_pts[i,0] = 0
+            _pad_pts[i,1] = pixevd.GeoService.GetME().pad_center(i).y
+            _pad_pts[i,2] = pixevd.GeoService.GetME().pad_center(i).x
+        
+        padPointsCollection = gl.GLScatterPlotItem(pos=_pad_pts,
+                                                   size=1,
+                                                   color=[0,0,1.0,1.0], 
+                                                   pxMode=False)
+        self.addItem(padPointsCollection)
+
 
     def setCenter(self, center):
         if len(center) != 3:
@@ -184,17 +191,3 @@ class viewport3D(gl.GLViewWidget):
         self.viewChanged.emit()
 
   
-
-  # def drawLine(self,point1,point2):
-
-  #   x = np.linspace(point1[0],point2[0],100)
-  #   y = np.linspace(point1[1],point2[1],100)
-  #   z = np.linspace(point1[2],point2[2],100)
-
-  #   pts = np.vstack([x,y,z]).transpose()
-  #   line = gl.GLLinePlotItem(pos=pts)
-  #   self.addItem(line)
-
-  # def mouseMoveEvent(self, pos):
-    # print pos
-

@@ -3,10 +3,10 @@
 
 #include "RawBase.h"
 
-namespace evd {
+namespace pixevd {
 
 RawBase::RawBase() {
-  _geoService = evd::GeoService::GetME();
+  _geoService = pixevd::GeoService::GetME();
   static bool once = false;
   if (!once) {
     import_array();
@@ -123,6 +123,6 @@ void RawBase::init_data_holder() {
   return;
 }
 
-}  // evd
+}  // pixevd
 
 #endif

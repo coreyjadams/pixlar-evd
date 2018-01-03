@@ -5,7 +5,7 @@
  *
  * \brief Class def header for a class Utils
  *
- * @author cadams + david caratelli
+ * @author cadams
  */
 
 /** \addtogroup LArUtil
@@ -19,11 +19,11 @@
 #include <limits>
 #include <vector>
 
-#include "Point.h"
+#include "core/dataproducts/Point.h"
 
-#include "sparse_vector.h"
+#include "core/dataproducts/sparse_vector.h"
 
-namespace evd {
+namespace pixevd {
 
 /// Utility: maximum value for double
 const double kDOUBLE_MAX = std::numeric_limits<double>::max();
@@ -68,8 +68,13 @@ class Utils {
     return _me;
   }
 
-  const ordered_sparse_waveform& suppressed_waveform(
-      const std::vector<float>& input_waveform, float threshold);
+  ordered_sparse_waveform suppressed_waveform(
+      const std::vector<float> input_waveform, float threshold,
+      size_t min_length) const;
+
+  ordered_sparse_waveform suppressed_waveform(const float* input_waveform,
+                                              size_t nticks, float threshold,
+                                              size_t min_length) const;
 };
 }
 

@@ -17,7 +17,7 @@
 #include <iostream>
 #include <cmath>
 
-namespace evd {
+namespace pixevd {
 
   /**
      \class Point2D

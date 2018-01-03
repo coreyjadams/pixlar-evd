@@ -9,9 +9,8 @@
 #pragma link off all classes;
 #pragma link off all functions;
 
-#pragma link C++ class evd::RawBase+;
-#pragma link C++ class evd::ReadDQMFile+;
-#pragma link C++ class evd::GeoService+;
+#pragma link C++ class pixevd::GeoService+;
+#pragma link C++ class pixevd::Utils+;
 //ADD_NEW_CLASS ... do not change this line
 #endif
 

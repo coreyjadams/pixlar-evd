@@ -1,5 +1,5 @@
 from pyqtgraph.Qt import QtCore
-from ROOT import evd
+from ROOT import pixevd
 import threading
 from .file_watcher import file_watcher, delayTimer
 
@@ -9,10 +9,10 @@ class io_manager(QtCore.QObject):
   def __init__(self, file=None):
     super(io_manager, self).__init__()
 
-    self._geom = evd.GeoService.GetME()
+    self._geom = pixevd.GeoService.GetME()
 
     # override the wire drawing process for lariat
-    self._process = evd.ReadDQMFile(self._geom.n_time_ticks())
+    self._process = pixevd.ReadDQMFile(self._geom.n_time_ticks())
     self._process.initialize()
 
     self.setInputFile(file)
@@ -97,7 +97,6 @@ class io_manager(QtCore.QObject):
       return
     else:
       file = str(file)
-      print type(file)
       self._process.setInput(file)
       self._hasFile = True
       self.goToEvent(1)
@@ -170,6 +169,13 @@ class io_manager(QtCore.QObject):
   def getPlane(self,plane):
     if self._hasFile:
       return self._process.as_array(plane)
+
+  def getVoxels(self, coarse):
+    if self._hasFile:
+      if coarse:
+        return self._process.getCoarseTensor3D(-11)
+      else:
+        return self._process.getSparseTensor3D(0.5, 10,-11)
 
 
   def hasWireData(self):

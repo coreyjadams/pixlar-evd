@@ -8,6 +8,7 @@ import pyqtgraph as pg
 import numpy as np
 
 from view_manager3D import view_manager3D
+from ROOT import pixevd
 
 # Wrap the spin box class to allow key signals to pass to the gui
 
@@ -60,7 +61,6 @@ class gui3D(QtGui.QWidget):
     self._runLabel.setText(runLabel)
     subrunLabel = "Subrun: " + str(self._event_manager.subrun())
     self._subrunLabel.setText(subrunLabel)
-    self.metaChanged(self._event_manager.meta())
     self._event_manager.drawFresh(self._view_manager)
     
 
@@ -209,9 +209,9 @@ class gui3D(QtGui.QWidget):
 
     # Get the min and max values for height, length, width:
 
-    width  = self._event_manager.meta().max_x() - self._event_manager.meta().min_x()
-    height = self._event_manager.meta().max_y() - self._event_manager.meta().min_y()
-    length = self._event_manager.meta().max_z() - self._event_manager.meta().min_z()
+    width  = pixevd.GeoService.GetME().max_x() - pixevd.GeoService.GetME().min_x()
+    height = pixevd.GeoService.GetME().max_y() - pixevd.GeoService.GetME().min_y()
+    length = pixevd.GeoService.GetME().max_z() - pixevd.GeoService.GetME().min_z()
     
 
     # Define the x,y,z location of the camera and world center
@@ -432,11 +432,6 @@ class gui3D(QtGui.QWidget):
 
     self.centerWidget.setVisible(False)   
     self.centerWidget.setVisible(True)   
-
-
-  def metaChanged(self, meta):
-    self._event_manager.refresh_meta()
-    self._view_manager.getView().updateMeta(meta)
 
 
   def initUI(self):

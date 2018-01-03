@@ -17,7 +17,7 @@ except:
     print "Must have opengl to use the 3D viewer, exiting."
     exit()
 
-from gui import evdgui3D
+from gui import pixlar_gui3D
 from manager import evd_manager_3D
 import os
 
@@ -32,30 +32,26 @@ def sigintHandler(*args):
 def main():
 
     parser = argparse.ArgumentParser(description='Python based event display.')
-    parser.add_argument("-c", "-C", "--config", help="Optional config file override.")
-    parser.add_argument('file', nargs='*', help="Optional input file to use")
+    parser.add_argument('file', nargs='?', help="Optional input file to use")
 
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)
 
-    if args.config is None:
-      print "No config supplied, using default configuration file."
-      args.config = os.environ["LARCV_VIEWER_TOPDIR"] + "/config/default3D.cfg"
 
 
     # If a file was passed, give it to the manager:
 
-    manager = evd_manager_3D(args.config, args.file)
+    manager = evd_manager_3D()
+    manager.io().parseFileName(args.file)
 
 
-    thisgui = evdgui3D()
-    thisgui.connect_manager(manager)
+    thisgui = pixlar_gui3D(manager)
     # manager.goToEvent(0)
     thisgui.initUI()
 
     manager.eventChanged.connect(thisgui.update)
-    manager.metaRefreshed.connect(thisgui.metaChanged)
+    thisgui.update()
 
 
     signal.signal(signal.SIGINT, sigintHandler)

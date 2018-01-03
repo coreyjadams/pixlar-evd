@@ -1,34 +1,39 @@
+
+ifndef PIXLAR_EVD_BASEDIR
+ERROR_MESSAGE := $(error PIXLAR_EVD_BASEDIR is not set... run configure.sh!)
+endif
+
+#####################################################################################
 #
-# This is an example GNUmakefile for my packages
+# Define directories to be compile upon a global "make"...
 #
-
-# specific names for this package
-DICT  = Pixlar_CoreDict
-SHLIB = libPixlar_Core.so
-SOURCES = $(filter-out $(DICT).cxx, $(wildcard *.cxx))
-FMWK_HEADERS = LinkDef.h $(DICT).h
-HEADERS = $(filter-out $(FMWK_HEADERS), $(wildcard *.h))
-OBJECTS = $(SOURCES:.cxx=.o)
-
-# include options for this package
-INCFLAGS  = -I.                       #Include itself
-INCFLAGS += $(shell python-config --includes)
-INCFLAGS += -I$(shell python -c "import numpy; print numpy.get_include()")
-
-# platform-specific options
-OSNAME          = $(shell uname -s)
-HOST            = $(shell uname -n)
-OSNAMEMODE      = $(OSNAME)
+SUBDIRS := dataproducts utils io
 
 
+#####################################################################################
+#
+# COMPILATION...
+#
+#.phony: all configure default-config clean
+.phony: all clean
 
-include $(PIXLAR_EVD_BASEDIR)/Makefile/Makefile.${OSNAME}
+all:
+	@for i in $(SUBDIRS); do ( echo "" && echo "Compiling $$i..." && cd $$i && $(MAKE) ) || exit $$?; done
+#####################################################################################
+#
+# CLEANs...
+#
+clean:
+	@for i in $(SUBDIRS); do ( echo "" && echo "Cleaning $$i..." && cd $$i && $(MAKE) clean ) || exit $$?; done
 
-# set compiler options for ROOT
-CXXFLAGS +=  `root-config --cflags`
-
-# call the common GNUmakefile
-LDFLAGS += -L$(shell python-config --prefix)/lib/
-LDFLAGS += $(shell python-config --ldflags)
-include $(PIXLAR_EVD_BASEDIR)/Makefile/GNUmakefile.CORE
-
+#####################################################################################
+#
+# DOCUMENTATION...
+#
+doxygen:
+	@echo 'dOxygenising pixlar evd...'
+	@mkdir -p $(LARCV_COREDIR)/doc/dOxygenMyProject
+	@doxygen $(LARCV_COREDIR)/doc/doxygenMyProject.script
+#
+#####################################################################################
+#EOF

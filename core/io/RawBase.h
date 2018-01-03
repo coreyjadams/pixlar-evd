@@ -20,9 +20,9 @@
 struct _object;
 typedef _object PyObject;
 
-#include "GeoService.h"
-#include "Utils.h"
-#include "sparse_vector.h"
+#include "core/utils/GeoService.h"
+#include "core/utils/Utils.h"
+#include "core/dataproducts/sparse_vector.h"
 
 #ifndef __CINT__
 #include "Python.h"
@@ -30,7 +30,7 @@ typedef _object PyObject;
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #endif
 
-namespace evd {
+namespace pixevd {
 
 /**
    \class RawBase
@@ -74,15 +74,14 @@ class RawBase {
 
   const std::vector<float> get_channel_data(unsigned int p, unsigned int ch) const;
 
-  const std::vector<ordered_sparse_waveform> get_sparse_data(
-      unsigned int p, float threshold) const;
+  
 
  protected:
   // sets up the _plane data object
   void init_data_holder();
 
-  const evd::GeoService* _geoService;
-  const evd::Utils* _utils;
+  const pixevd::GeoService* _geoService;
+  const pixevd::Utils* _utils;
 
   // This section holds the images for the data (wire, raw digit, etc)
   std::vector<std::vector<float> > _data_array;
@@ -95,7 +94,7 @@ class RawBase {
 
   std::string producer;
 };
-}  // evd
+}  // pixevd
 
 #endif
 /** @} */  // end of doxygen group

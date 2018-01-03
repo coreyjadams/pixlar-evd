@@ -15,58 +15,41 @@ class evd_manager_3D(evd_manager_base):
     """This class handles file I/O and drawing for 3D viewer"""
 
 
-    def __init__(self, config, _file=None):
-        super(evd_manager_3D, self).__init__(config, _file)
+    def __init__(self, _file=None):
+        super(evd_manager_3D, self).__init__(_file)
         self._drawableItems = datatypes.drawableItems3D()
                 
 
-    def init_manager(self, _file):
+    # def init_manager(self, _file):
 
-        # For the larcv manager, using the IOManager to get at the data
-        self._driver =  larcv.ProcessDriver('ProcessDriver')
-        self._driver.configure(self._config)
-        self._io_manager = self._driver.io()
+    #     # For the larcv manager, using the IOManager to get at the data
+    #     self._driver =  larcv.ProcessDriver('ProcessDriver')
+    #     self._driver.configure(self._config)
+    #     self._io_manager = self._driver.io()
 
-        # Meta keeps track of information about number of planes, visible
-        # regions, etc.:
-        self._meta = event_meta3D()
-
-
-        # Drawn classes is a list of things getting drawn, as well.
-        self._drawnClasses = dict()
+    #     # Meta keeps track of information about number of planes, visible
+    #     # regions, etc.:
+    #     self._meta = event_meta3D()
 
 
-        if _file != None:
-            flist=ROOT.std.vector('std::string')()
-            if type(_file) is list:
-                for f in _file: flist.push_back(f)
-                self._driver.override_input_file(flist)
-            else:
-                flist.push_back(_file)
-                self._driver.override_input_file(flist)
+    #     # Drawn classes is a list of things getting drawn, as well.
+    #     self._drawnClasses = dict()
 
-        self._driver.initialize()
-        self.go_to_entry(0)
 
-        self.refresh_meta()
+    #     if _file != None:
+    #         flist=ROOT.std.vector('std::string')()
+    #         if type(_file) is list:
+    #             for f in _file: flist.push_back(f)
+    #             self._driver.override_input_file(flist)
+    #         else:
+    #             flist.push_back(_file)
+    #             self._driver.override_input_file(flist)
+
+    #     self._driver.initialize()
+    #     self.go_to_entry(0)
+
+    #     self.refresh_meta()
         
-
-    def refresh_meta(self, producer=None):
-        # Read in any of the image2d products if none is specified.
-        # Use it's meta info to build up the meta for the viewer
-
-        _producers = self._io_manager.producer_list('meta')
-        if '3D' in _producers:
-            _producer = '3D'
-        elif _producers.size() > 0:
-            _producer = _producers[0]
-        else:
-            print "Error, no meta available for the viewer."
-            exit()
-
-        _global_meta = self._io_manager.get_data('meta',_producer)
-
-        self._meta.refresh(_global_meta)
 
 
 

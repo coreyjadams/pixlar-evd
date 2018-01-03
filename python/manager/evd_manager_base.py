@@ -25,15 +25,6 @@ class evd_manager_base(QtCore.QObject):
         self._keyTable = dict()
 
 
-        if _file != None:
-            flist=ROOT.std.vector('std::string')()
-            if type(_file) is list:
-                for f in _file: flist.push_back(f)
-                self._driver.override_input_file(flist)
-            else:
-                flist.push_back(_file)
-                self._driver.override_input_file(flist)
-
     def eventChangedEcho(self):
         self.eventChanged.emit()
 

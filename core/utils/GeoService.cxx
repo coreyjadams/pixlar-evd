@@ -3,9 +3,9 @@
 
 #include "GeoService.h"
 
-namespace evd {
+namespace pixevd {
 
-GeoService* GeoService::_me = 0;
+GeoService* pixevd::GeoService::_me = 0;
 
 GeoService::GeoService() {
   // Need to initialize the crazy mapping vector
@@ -502,6 +502,51 @@ GeoService::GeoService() {
   }
 }
 
-}  // evd
+bool GeoService::compatible(size_t pixel, size_t pad) const {
+  if (pixel < 120) {
+    if (pad < 120)
+      return true;
+    else
+      return false;
+  } else {
+    if (pad < 120)
+      return false;
+    else
+      return true;
+  }
+}
+
+Point2D GeoService::xy(size_t pixel, size_t pad) const {
+  if (compatible(pixel, pad))
+    return pad_top_left(pad) + pixel_relative_coordinate(pixel);
+  else
+    throw pixlar_exception("Pixel and pad are not compatible!");
+}
+
+Point2D GeoService::pad_top_left(size_t pad) const {
+  size_t pad_id = pad % 120;
+  float shift = 0;
+  if (pad > 120) shift = 36;
+  float y_coord = pad_id % 15;
+  float x_coord = pad_id / 15;
+  return Point2D(x_coord * 4.5 + shift, y_coord * 2.4);
+}
+
+Point2D GeoService::pad_center(size_t pad) const {
+  size_t pad_id = pad % 120;
+  float shift = 0;
+  if (pad > 120) shift = 36;
+  float y_coord = pad_id % 15;
+  float x_coord = pad_id / 15;
+  return Point2D(x_coord * 4.5 + 2.25 + shift, y_coord * 2.4 + 1.2);
+}
+
+Point2D GeoService::pixel_relative_coordinate(size_t pixel) const {
+  int y_coord = pixel % 8;
+  int x_coord = pixel / 8;
+  return Point2D(-x_coord * 0.3, y_coord * 0.3);
+}
+
+}  // pixevd`
 
 #endif

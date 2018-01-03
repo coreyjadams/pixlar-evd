@@ -2,7 +2,7 @@
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 
-from ROOT import evd
+from ROOT import pixevd
 
 import numpy
 
@@ -91,8 +91,8 @@ class viewport(pg.GraphicsLayoutWidget):
     self._item.setLevels(self._default_levels)
 
 
-    self._x_max_range = [0, evd.GeoService.GetME().n_channels(self._plane)]
-    self._y_max_range = [0, evd.GeoService.GetME().n_time_ticks()]
+    self._x_max_range = [0, pixevd.GeoService.GetME().n_channels(self._plane)]
+    self._y_max_range = [0, pixevd.GeoService.GetME().n_time_ticks()]
 
     # Fix the maximum width of the widgets:
     self._upperLevel.setMaximumWidth(35)

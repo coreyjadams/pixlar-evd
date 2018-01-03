@@ -2,13 +2,14 @@
 #define PIXLAR_EVD_SPARSEVECTOR_H
 
 #include <vector>
-namespace evd {
+namespace pixevd {
 typedef float ADC_t;
 typedef size_t Time_t;
 
 /// waveform class
 class waveform : public std::vector<ADC_t> {
  public:
+  waveform() : std::vector<ADC_t>() {}
   waveform(size_t num_element, ADC_t adc)
       : std::vector<ADC_t>(num_element, adc) {}
   ~waveform() {}
