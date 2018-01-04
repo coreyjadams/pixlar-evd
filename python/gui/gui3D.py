@@ -498,25 +498,25 @@ class gui3D(QtGui.QWidget):
     super(gui3D, self).keyPressEvent(e)
 
   def screenCapture(self):
-    print("Screen Capture!")
+    pixmapImage = QtGui.QPixmap.grabWindow(self.winId())
     dialog = QtGui.QFileDialog()
     r = self._event_manager.run()
     e = self._event_manager.event()
     s = self._event_manager.subrun()
-    name = "larcv_3D_" + "R" + str(r)
+    name = "pixlar_3D_" + "R" + str(r)
     name = name + "_S" + str(s)
     name = name + "_E" + str(e) + ".png"
     f = dialog.getSaveFileName(self,"Save File",name,
         "PNG (*.png);;JPG (*.jpg);;All Files (*)")
 
-    # print filt
-    # Print
-    if (pg.Qt.QtVersion.startswith('4')):
-      pixmapImage = QtGui.QPixmap.grabWidget(self)
-      pixmapImage.save(f,"PNG")
-    else:
-      pixmapImage = super(gui3D, self).grab()
-      pixmapImage.save(f[0],"PNG")
+    # # print filt
+    # # Print
+    # if (pg.Qt.QtVersion.startswith('4')):
+    #   pixmapImage = QtGui.QPixmap.grabWindow(self.winId())
+    # else:
+    #   pixmapImage = super(gui3D, self).grab()
+
+    pixmapImage.save(f,"PNG")
 
 
 
