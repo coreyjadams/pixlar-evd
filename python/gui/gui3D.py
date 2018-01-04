@@ -3,7 +3,7 @@
 import sys, signal
 import argparse
 # import collections
-from pyqtgraph.Qt import QtGui, QtCore
+from pyqtgraph.Qt import QtGui, QtCore, QtWidgets
 import pyqtgraph as pg
 import numpy as np
 
@@ -498,7 +498,12 @@ class gui3D(QtGui.QWidget):
     super(gui3D, self).keyPressEvent(e)
 
   def screenCapture(self):
-    pixmapImage = QtGui.QPixmap.grabWindow(self.winId())
+    if (pg.Qt.QtVersion.startswith('4')):
+        pixmapImage = QtGui.QPixmap.grabWindow(self.winId())
+    else:
+        screen = QtWidgets.QApplication.instance().primaryScreen()
+        pixmapImage = screen.grabWindow(self.winId())
+        # pixmapImage = super(gui3D, self).grab()
     dialog = QtGui.QFileDialog()
     r = self._event_manager.run()
     e = self._event_manager.event()
@@ -511,12 +516,14 @@ class gui3D(QtGui.QWidget):
 
     # # print filt
     # # Print
-    # if (pg.Qt.QtVersion.startswith('4')):
-    #   pixmapImage = QtGui.QPixmap.grabWindow(self.winId())
-    # else:
-    #   pixmapImage = super(gui3D, self).grab()
+    if (pg.Qt.QtVersion.startswith('4')):
+        pixmapImage.save(f,"PNG")
+    else:
+        print f[0]
+        print f[1]
+        print type(pixmapImage)
+        pixmapImage.save(f[0], f[1])
 
-    pixmapImage.save(f,"PNG")
 
 
 
