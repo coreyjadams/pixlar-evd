@@ -81,6 +81,8 @@ class viewport3D(gl.GLViewWidget):
                                                    pxMode=False)
         self.addItem(padPointsCollection)
 
+        self.setCameraPos((22.5, 125, -60))
+
 
     def setCenter(self, center):
         if len(center) != 3:

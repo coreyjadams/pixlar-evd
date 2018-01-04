@@ -5,11 +5,11 @@ import pyqtgraph.opengl as gl
 import pyqtgraph as pg
 import numpy
 
-colorMap = {'ticks': [(1, (151, 30, 22, 255)),
-                      (0.791, (0, 181, 226, 255)),
-                      (0.645, (76, 140, 43, 255)),
-                      (0.47, (0, 206, 24, 255)),
-                      (0.33333, (254, 209, 65, 255)),
+colorMap = {'ticks': [(1, (151, 30, 22, 125)),
+                      (0.791, (0, 181, 226, 125)),
+                      (0.645, (76, 140, 43, 125)),
+                      (0.47, (0, 206, 24, 125)),
+                      (0.33333, (254, 209, 65, 125)),
                       (0, (255, 255, 255, 255))],
             'mode': 'rgb'}
 
@@ -55,6 +55,8 @@ class view_manager3D(QtCore.QObject):
         # self._cmap.sigGradientChangeFinished.connect(self.gradientChangeFinished)
         self._cmap.resize(1, 1)
 
+        self.refreshColors.connect(self.redraw)
+
         self._lookupTable = self._cmap.getLookupTable(255, alpha=0.75)
 
         # These boxes control the levels.
@@ -72,7 +74,7 @@ class view_manager3D(QtCore.QObject):
         self._cmap.setMaximumWidth(25)
         self._lowerLevel.setMaximumWidth(35)
 
-
+        self._voxelset = None
 
         self._layout = QtGui.QHBoxLayout()
         self._layout.addWidget(self._view)
@@ -134,8 +136,8 @@ class view_manager3D(QtCore.QObject):
         self._view.update()
 
     def restoreDefaults(self):
-        print "restoreDefaults called but not implemented"
-
+        # print "restoreDefaults called but not implemented"
+        self._view.setCameraPos((22.5, 125, -60))
 
     def drawVoxels(self, io_manager):
         self._voxelset = io_manager.getVoxels(coarse=True)
@@ -147,6 +149,8 @@ class view_manager3D(QtCore.QObject):
 
     def redraw(self):
 
+        if self._voxelset is None:
+            return
 
         if self._gl_voxel_mesh is not None:
             self.getView().removeItem(self._gl_voxel_mesh)
@@ -162,7 +166,7 @@ class view_manager3D(QtCore.QObject):
                              faceColors=colors,
                              smooth=False)
 
-        # mesh.setGLOptions("additive")        
+        mesh.setGLOptions("additive")        
         if verts is not None:
             self._gl_voxel_mesh = mesh
             self.getView().addItem(self._gl_voxel_mesh)
@@ -248,7 +252,6 @@ class view_manager3D(QtCore.QObject):
             # print "Min "  + str(_voxel_value)
             return (0,0,0,0)
         else:
-            print _voxel_value
             index = 255*(_voxel_value - _min) / (_max - _min)
             return _lookupTable[int(index)]
 
