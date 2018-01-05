@@ -54,6 +54,10 @@ class viewport3D(gl.GLViewWidget):
         pts[:,1] *= pixevd.GeoService.GetME().max_y() - pixevd.GeoService.GetME().min_y()
         pts[:,2] *= pixevd.GeoService.GetME().max_z() - pixevd.GeoService.GetME().min_z()
 
+        pts[:,0] += pixevd.GeoService.GetME().min_x()
+        pts[:,1] += pixevd.GeoService.GetME().min_y()
+        pts[:,2] += pixevd.GeoService.GetME().min_z()
+
         det_outline = gl.GLLinePlotItem(pos=pts,color=(1.0,1.0,1.0,1.0), width=3)
         self.addItem(det_outline)
 

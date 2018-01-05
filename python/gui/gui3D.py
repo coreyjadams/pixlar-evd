@@ -3,7 +3,10 @@
 import sys, signal
 import argparse
 # import collections
-from pyqtgraph.Qt import QtGui, QtCore, QtWidgets
+from pyqtgraph.Qt import QtGui, QtCore
+import pyqtgraph as pg
+if not pg.Qt.QtVersion.startswith('4'): 
+    from pyqtgraph.Qt import QtWidgets
 import pyqtgraph as pg
 import numpy as np
 

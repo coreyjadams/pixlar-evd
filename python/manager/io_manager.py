@@ -177,8 +177,17 @@ class io_manager(QtCore.QObject):
       else:
         return self._process.getSparseTensor3D(0.5, 10,-11)
 
+  def getPads(self):
+    if self._hasFile:
+      return self._process.as_array(1)
 
-  def hasWireData(self):
+
+  def getPixels(self):
+    if self._hasFile:
+      return self._process.as_array(0)
+
+
+  def hasData(self):
     if self._hasFile:
       return True
     else:

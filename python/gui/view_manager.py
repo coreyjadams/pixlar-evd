@@ -36,8 +36,6 @@ class view_manager(QtCore.QObject):
 
   def drawPlanes(self, event_manager):
     for view, obj in self._drawerList.iteritems():
-      # print view
-      # print event_manager.io().getPlane(view)
       obj.setImage(event_manager.io().getPlane(view))
 
   def addEvdDrawer(self,plane):

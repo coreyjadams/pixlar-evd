@@ -5,6 +5,8 @@ import pyqtgraph.opengl as gl
 import pyqtgraph as pg
 import numpy
 
+from manager import voxel_maker
+
 colorMap = {'ticks': [(1, (151, 30, 22, 125)),
                       (0.791, (0, 181, 226, 125)),
                       (0.645, (76, 140, 43, 125)),
@@ -87,6 +89,8 @@ class view_manager3D(QtCore.QObject):
         self._layout.addLayout(colors)
 
 
+        self.voxel_maker = voxel_maker()
+
 
         self._gl_voxel_mesh = None
 
@@ -139,8 +143,24 @@ class view_manager3D(QtCore.QObject):
         # print "restoreDefaults called but not implemented"
         self._view.setCameraPos((22.5, 125, -60))
 
-    def drawVoxels(self, io_manager):
-        self._voxelset = io_manager.getVoxels(coarse=True)
+    def drawVoxels(self, io_manager, params):
+        if not io_manager.hasData():
+            return
+
+        if params['coarse']:
+            self._voxelset = self.voxel_maker.get_coarse_voxels(
+                io_manager.getPads(),
+                pad_hit_threshold = params['pad_threshold'],
+                pad_hit_separation = params['pad_spacing'])
+        else:
+            self._voxelset = self.voxel_maker.get_fine_voxels(
+                io_manager.getPads(), 
+                io_manager.getPixels(),
+                pad_hit_threshold = params['pad_threshold'],
+                pad_hit_separation = params['pad_spacing'],
+                pixel_hit_threshold = params['pad_threshold'], 
+                pixel_hit_separation = params['pixel_spacing'],
+                match_distance = params['match_spacing'])
         self.redraw()
 
 
@@ -172,9 +192,10 @@ class view_manager3D(QtCore.QObject):
             self.getView().addItem(self._gl_voxel_mesh)
 
     def buildTriangleArray(self):
-        verts = None
-        faces = None
-        colors = None
+        n_voxels = self._voxelset.as_vector().size()
+        verts = numpy.zeros((n_voxels*8, 3))
+        faces = numpy.zeros((n_voxels*12, 3),dtype=int)
+        colors = numpy.zeros((n_voxels*12, 4))
 
 
         i = 0
@@ -190,27 +211,32 @@ class view_manager3D(QtCore.QObject):
                                        self.getLevels(),
                                        voxel.value())
 
-            if colors is None:
-                colors = numpy.asarray([this_color]*12)
-            else:
-                colors = numpy.append(colors,
-                                      numpy.asarray([this_color]*12),
-                                      axis=0)
+            colors[i*12:(i+1)*12] = this_color
+            # if colors is None:
+            #     colors = numpy.asarray([this_color]*12)
+            # else:
+            #     colors = numpy.append(colors,
+            #                           numpy.asarray([this_color]*12),
+            #                           axis=0)
 
             # print "({}, {}, {})".format(_pos[0], _pos[1], _pos[2])
             this_verts = self.makeBox(voxel.id(), self._voxelset.meta())
 
-            if faces is None:
-                faces = faces_template
-            else:
-                faces = numpy.append(faces, 
-                                     faces_template + 8*i, 
-                                     axis=0)
-            if verts is None:
-                verts = this_verts
-            else:
-                verts = numpy.append(verts, 
-                                     this_verts, axis=0)
+            verts[i*8:(i+1)*8] = this_verts.copy()
+            faces[i*12:(i+1)*12] = faces_template + 8*i
+
+            # print verts
+            # if faces is None:
+            #     faces = faces_template
+            # else:
+            #     faces = numpy.append(faces, 
+            #                          faces_template + 8*i, 
+            #                          axis=0)
+            # if verts is None:
+            #     verts = this_verts
+            # else:
+            #     verts = numpy.append(verts, 
+            #                          this_verts, axis=0)
 
             i += 1
 
@@ -230,9 +256,11 @@ class view_manager3D(QtCore.QObject):
         
         #Move the points to the right coordinate in this space
 
-        verts_box[:,0] += meta.pos_x(voxel_id) - meta.min_x()
-        verts_box[:,1] += meta.pos_y(voxel_id) - meta.min_y()
-        verts_box[:,2] += meta.pos_z(voxel_id) - meta.min_z()
+
+
+        verts_box[:,0] += meta.pos_x(voxel_id) 
+        verts_box[:,1] += meta.pos_y(voxel_id) 
+        verts_box[:,2] += meta.pos_z(voxel_id) 
 
 
         # color_arr = numpy.ndarray((12, 4))
