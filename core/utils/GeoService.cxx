@@ -529,7 +529,7 @@ Point2D GeoService::pad_top_left(size_t pad) const {
   if (pad > 120) shift = 36;
   float y_coord = pad_id % 15;
   float x_coord = pad_id / 15;
-  return Point2D(x_coord * 4.5 + shift, y_coord * 2.4);
+  return Point2D(x_coord * 4.5 + shift, y_coord * 2.4 - 18);
 }
 
 Point2D GeoService::pad_center(size_t pad) const {
@@ -538,7 +538,7 @@ Point2D GeoService::pad_center(size_t pad) const {
   if (pad > 120) shift = 36;
   float y_coord = pad_id % 15;
   float x_coord = pad_id / 15;
-  return Point2D(x_coord * 4.5 + 2.25 + shift, y_coord * 2.4 + 1.2);
+  return Point2D(x_coord * 4.5 + 2.25 + shift, y_coord * 2.4 + 1.2 - 18);
 }
 
 Point2D GeoService::pixel_relative_coordinate(size_t pixel) const {
