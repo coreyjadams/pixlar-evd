@@ -8,10 +8,10 @@ import numpy
 from manager import voxel_maker
 
 colorMap = {'ticks': [(1, (151, 30, 22, 125)),
-                      (0.791, (0, 181, 226, 125)),
-                      (0.645, (76, 140, 43, 125)),
-                      (0.47, (0, 206, 24, 125)),
-                      (0.33333, (254, 209, 65, 125)),
+                      (0.791, (76, 140, 43, 125)),
+                      (0.645, (0, 206, 24, 125)),
+                      (0.470, (254, 209, 65, 125)),
+                      (0.333, (0, 181, 226, 125)),
                       (0, (255, 255, 255, 255))],
             'mode': 'rgb'}
 
@@ -69,7 +69,7 @@ class view_manager3D(QtCore.QObject):
         self._lowerLevel.returnPressed.connect(self.colorsChanged)
 
         self._lowerLevel.setText(str(0.0))
-        self._upperLevel.setText(str(2.0))
+        self._upperLevel.setText(str(50.0))
 
         # Fix the maximum width of the widgets:
         self._upperLevel.setMaximumWidth(35)

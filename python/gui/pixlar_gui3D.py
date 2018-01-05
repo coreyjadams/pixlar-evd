@@ -62,10 +62,10 @@ class pixlar_gui3D(gui3D):
     self._voxel_params = dict()
     self._voxel_params['pixel_threshold'] = 15
     self._voxel_params['pixel_spacing'] = 7
-    self._voxel_params['pad_threshold'] = 15
+    self._voxel_params['pad_threshold'] = 25
     self._voxel_params['pad_spacing'] = 7
     self._voxel_params['match_spacing'] = 7
-    self._voxel_params['coarse'] = True
+    self._voxel_params['coarse'] = False
 
 
     # master layout:
